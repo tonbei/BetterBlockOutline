@@ -25,7 +25,7 @@ public class RenderingUtil {
         maxY = maxY + (float) cameraOffset.y;
         maxZ = maxZ + (float) cameraOffset.z;
 
-        Matrix4f position = entry.getPositionMatrix();
+        Matrix4f position = entry.getModel();
 
         // West
         buffer.vertex(position, minX, minY, minZ).color(color.r, color.g, color.b, color.a).next();
@@ -131,12 +131,12 @@ public class RenderingUtil {
         Vector3f normal = RenderingUtil.getNormalAngle(start, end);
 
         buffer.vertex(
-                entry.getPositionMatrix(), start.x, start.y, start.z
-        ).color(color.r, color.g, color.b, color.a).normal(entry.getNormalMatrix(), normal.x, normal.y, normal.z).next();
+                entry.getModel(), start.x, start.y, start.z
+        ).color(color.r, color.g, color.b, color.a).normal(entry.getNormal(), normal.x, normal.y, normal.z).next();
 
         buffer.vertex(
-                entry.getPositionMatrix(), end.x, end.y, end.z
-        ).color(color.r, color.g, color.b, color.a).normal(entry.getNormalMatrix(), normal.x, normal.y, normal.z).next();
+                entry.getModel(), end.x, end.y, end.z
+        ).color(color.r, color.g, color.b, color.a).normal(entry.getNormal(), normal.x, normal.y, normal.z).next();
     }
 
     public void drawString(MatrixStack matrices, TextRenderer renderer, String string, Camera camera, Vector3d position) {
@@ -165,7 +165,7 @@ public class RenderingUtil {
         matrices.multiply(camera.getRotation());
         matrices.scale(-size, -size, size);
         setDepth(depth);
-        Matrix4f matrix4f = matrices.peek().getPositionMatrix();
+        Matrix4f matrix4f = matrices.peek().getModel();
         VertexConsumerProvider.Immediate immediate = VertexConsumerProvider.immediate(Tessellator.getInstance().getBuffer());
         float yOffset = ((float) (lines.length - 1) / 2) * lineHeight;
         matrices.translate(0, -yOffset, 0);

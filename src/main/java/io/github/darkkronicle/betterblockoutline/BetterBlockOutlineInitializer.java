@@ -3,13 +3,10 @@ package io.github.darkkronicle.betterblockoutline;
 import fi.dy.masa.malilib.config.ConfigManager;
 import fi.dy.masa.malilib.config.IConfigBase;
 import fi.dy.masa.malilib.event.InputEventHandler;
-import fi.dy.masa.malilib.event.RenderEventHandler;
-import fi.dy.masa.malilib.gui.GuiBase;
 import fi.dy.masa.malilib.interfaces.IInitializationHandler;
 import io.github.darkkronicle.betterblockoutline.config.ConfigStorage;
 import io.github.darkkronicle.betterblockoutline.config.SaveableConfig;
 import io.github.darkkronicle.betterblockoutline.config.gui.ColorModifierListScreen;
-import io.github.darkkronicle.betterblockoutline.config.gui.ConfigScreen;
 import io.github.darkkronicle.betterblockoutline.config.gui.GuiTabManager;
 import io.github.darkkronicle.betterblockoutline.config.hotkeys.HotkeyCallbacks;
 import io.github.darkkronicle.betterblockoutline.config.hotkeys.Hotkeys;
@@ -18,13 +15,6 @@ import io.github.darkkronicle.betterblockoutline.renderers.BasicOutlineRenderer;
 import io.github.darkkronicle.betterblockoutline.renderers.BlockInfo2dRenderer;
 import io.github.darkkronicle.betterblockoutline.renderers.BlockInfo3dRenderer;
 import io.github.darkkronicle.betterblockoutline.renderers.PersistentOutlineRenderer;
-import io.github.darkkronicle.kommandlib.CommandManager;
-import io.github.darkkronicle.kommandlib.command.ClientCommand;
-import io.github.darkkronicle.kommandlib.command.CommandInvoker;
-import io.github.darkkronicle.kommandlib.invokers.BaseCommandInvoker;
-import io.github.darkkronicle.kommandlib.util.CommandUtil;
-import io.github.darkkronicle.kommandlib.util.InfoUtil;
-import net.minecraft.server.command.ServerCommandSource;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,13 +68,6 @@ public class BetterBlockOutlineInitializer implements IInitializationHandler {
         InputEventHandler.getInputManager().registerMouseInputHandler(InputHandler.getInstance());
 
         HotkeyCallbacks.setup();
-
-        CommandInvoker<ServerCommandSource> base = new BaseCommandInvoker(
-                BetterBlockOutline.MOD_ID,
-                "betterblockoutline",
-                CommandUtil.literal("betterblockoutline").executes(ClientCommand.of(context -> InfoUtil.sendChatMessage("BetterBlockOutline by DarkKronicle"))).build()
-        );
-        CommandManager.getInstance().addCommand(base);
     }
 
 }

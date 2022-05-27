@@ -1,6 +1,3 @@
-import javax.net.ssl.HttpsURLConnection
-import java.nio.file.Files
-
 plugins {
     id 'fabric-loom' version '0.10-SNAPSHOT'
     id 'maven-publish'
@@ -26,11 +23,8 @@ dependencies {
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-    modImplementation "fi.dy.masa.malilib:malilib-fabric-1.18.0:${project.malilib_version}"
-    modImplementation "com.github.DarkKronicle:KommandLib:${project.kommandlib_version}"
-
+    modImplementation "fi.dy.masa.malilib:malilib-fabric-1.17.1:${project.malilib_version}"
     modCompileOnly "io.github.prospector:modmenu:${project.modmenu_version}"
-    include "com.github.DarkKronicle:KommandLib:${project.kommandlib_version}"
 }
 
 processResources {
@@ -44,7 +38,7 @@ processResources {
 
 tasks.withType(JavaCompile).configureEach {
     it.options.encoding = "UTF-8"
-    it.options.release = 17
+    it.options.release = 16
 }
 
 jar {
@@ -68,54 +62,4 @@ publishing {
         // The repositories here will be used for publishing your artifact, not for
         // retrieving dependencies.
     }
-}
-
-task discord {
-    dependsOn build
-
-    doLast {
-        String webhook
-        if (additionalProperties["discord_webhook"] != null) {
-            webhook = additionalProperties["discord_webhook"]
-        } else if (System.getenv("discord_webhook") != null) {
-            webhook = System.getenv("discord_webhook")
-        } else {
-            System.out.println("No webhook found...")
-            return
-        }
-
-        String commitHash = 'git rev-parse --verify --short HEAD'.execute().text.trim()
-
-        File file = remapJar.archiveFile.get().asFile
-        String fileName = "$project.archives_base_name}-${project.mod_version}-${commitHash}.jar"
-        String text = "<:Kronos:799707832399691867> **${project.archives_base_name} v${project.mod_version}-${commitHash} for ${project.minecraft_version}**"
-        URL url = new URL(webhook)
-        HttpsURLConnection connection = (HttpsURLConnection) url.openConnection()
-
-        def cmdLine = "git log --format=%B -n 1"
-        def procCommit = cmdLine.execute()
-        String changeLog = procCommit.in.getText()
-        text = text + "\n" + changeLog
-
-        String boundary = UUID.randomUUID().toString()
-        connection.setRequestMethod("POST")
-        connection.setDoOutput(true)
-        connection.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary)
-        DataOutputStream stream = new DataOutputStream(connection.getOutputStream());
-
-        stream.writeBytes("--" + boundary + "\r\n")
-        stream.writeBytes("Content-Disposition: form-data; name=\"file\"; filename=\"" + fileName + "\"\r\n\r\n")
-        stream.write(Files.readAllBytes(file.toPath()))
-        stream.writeBytes("\r\n")
-        stream.writeBytes("--" + boundary + "\r\n");
-        stream.writeBytes('Content-Disposition: form-data; name="content"\r\n\r\n' + text + '\r\n')
-        stream.writeBytes("--" + boundary + "--\r\n")
-
-        stream.flush()
-        stream.close()
-
-        connection.getInputStream().close()
-        connection.disconnect()
-    }
-
 }
